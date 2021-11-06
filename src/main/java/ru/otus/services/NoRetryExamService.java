@@ -1,14 +1,11 @@
 package ru.otus.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Service;
 import ru.otus.api.ExamApi;
-import ru.otus.dao.QuestionsDao;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +13,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class NoRetryExamService implements ExamService {
 
-    private final QuestionsDao questionsDao;
+    private final QuestionService questionService;
     private final ExamApi examApi;
     private final int targetScore;
     private final Map<String, Boolean> students = new HashMap<>();
 
-
-    @Override
-    public void printTotalStudentsGrades() {
+    private void printTotalStudentsGrades() {
         System.out.println("Total results of exams are:");
         students.forEach((studentFio, isPassed) ->
                 System.out.println("Student: " + studentFio + ", is passed " + isPassed)
@@ -31,10 +26,33 @@ public class NoRetryExamService implements ExamService {
     }
 
     @Override
-    public void startNewExam() {
+    public void start() {
+        while(true) {
+            System.out.println("If you want to start exam write 1, to get students exam status write 2, to exit 0");
+            String response = examApi.getResponse();
+            switch (response) {
+                case "0":
+                    System.exit(0);
+                    break;
+                case "1":
+                    try {
+                        startNewExam();
+                    } catch (FileNotFoundException e) {
+                        System.out.println("Failed to start new exam. The questions not found.");
+                    }
+                    break;
+                case "2":
+                    printTotalStudentsGrades();
+                    break;
+                default:
+            }
+        }
+    }
+
+    private void startNewExam() throws FileNotFoundException {
         String fio = askFio();
         int score = 0;
-        List<Question> questions = questionsDao.getQuestions();
+        List<Question> questions = questionService.getAllQuestions();
         for (Question question : questions) {
             score += tellQuestionAndWaitResponseAndHandleIt(question);
         }

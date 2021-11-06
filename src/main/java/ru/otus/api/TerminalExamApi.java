@@ -1,10 +1,13 @@
 package ru.otus.api;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Scanner;
 
+@Service
 public class TerminalExamApi implements ExamApi {
 
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
     @Override
     public String getResponse() {
