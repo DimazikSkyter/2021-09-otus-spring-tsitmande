@@ -1,6 +1,8 @@
 package ru.otus.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import ru.otus.api.ExamApi;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
@@ -10,12 +12,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 @RequiredArgsConstructor
 public class NoRetryExamService implements ExamService {
 
     private final QuestionService questionService;
     private final ExamApi examApi;
-    private final int targetScore;
+    @Value("${ru.otus.targetScore}")
+    private int targetScore;
     private final Map<String, Boolean> students = new HashMap<>();
 
     private void printTotalStudentsGrades() {
