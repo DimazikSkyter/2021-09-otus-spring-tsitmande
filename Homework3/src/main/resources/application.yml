@@ -1,0 +1,12 @@
+logging:
+  level:
+    root: INFO
+exam:
+  targetScore: 4
+  locale: en
+questions:
+  path: ru/otus/questions_ru-ru.csv
+spring:
+  messages:
+    fallbackToSystemLocale: false
+    basename: i18n/messages
