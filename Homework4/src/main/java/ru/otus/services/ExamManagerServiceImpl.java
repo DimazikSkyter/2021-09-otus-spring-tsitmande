@@ -36,12 +36,25 @@ public class ExamManagerServiceImpl implements ExamManagerService {
     }
 
     public boolean canStartNewExam() {
-        if(studentsService.getCurrentStudent() == null) {
-            log.info("You are not loggined.");
+        if (studentsService.getCurrentStudent() == null) {
+            log.info(messageSource.getMessage("not.login", null, examProperties.getLocale()));
             return false;
         }
         if (studentsService.isExamFinishedForCurrentStudent()) {
             log.info("{}, вы уже сдали экзамен.", studentsService.getCurrentStudent());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean canCheckStatus() {
+        if (studentsService.getCurrentStudent() == null) {
+            log.info(messageSource.getMessage("not.login", null, examProperties.getLocale()));
+            return false;
+        }
+        if (!studentsService.isExamFinishedForCurrentStudent()) {
+            log.info("{}, вы пока не сдали экзамен.", studentsService.getCurrentStudent());
             return false;
         }
         return true;
@@ -52,8 +65,6 @@ public class ExamManagerServiceImpl implements ExamManagerService {
                 ? messageSource.getMessage("exam.total.pass", null, examProperties.getLocale())
                 : messageSource.getMessage("exam.total.fail", null, examProperties.getLocale());
     }
-
-
 
 
     @Override

@@ -1,15 +1,12 @@
-package ru.otus.services;
+package ru.otus.config;
 
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
-import ru.otus.dao.QuestionsDao;
-import ru.otus.dao.QuestionsDaoCsv;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.properties.ExamProperties;
@@ -22,33 +19,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Configuration
+public class QuestionConfig {
 
-@Service
-@RequiredArgsConstructor
-public class QuestionServiceImpl implements QuestionService {
-
-    private final MessageSource messageSource;
-    private final ExamProperties examProperties;
-    private final QuestionsProperties questionsProperties;
-    private QuestionsDao questionsDao;
-
-    @Autowired
-    private CSVReaderBuilder csvReaderBuilder;
-
-    @Override
-    public List<Question> getAllQuestions() {
-        if (questionsDao == null) {
-            questionsDao = questionsDao();
-        }
-        return questionsDao.getQuestions();
+    @Bean
+    public List<Question> questions(MessageSource messageSource, ExamProperties examProperties, QuestionsProperties questionsProperties) {
+        CSVReaderBuilder csvReaderBuilder = csvReaderBuilder(questionsProperties.getPath());
+        return handleQuestionsFromCsv(csvReaderBuilder, messageSource, examProperties);
     }
 
-    private QuestionsDao questionsDao() {
-        List<Question> questions = questions(csvReaderBuilder);
-        return new QuestionsDaoCsv(questions);
-    }
-
-    private List<Question> questions(CSVReaderBuilder csvReaderBuilder) {
+    private List<Question> handleQuestionsFromCsv(CSVReaderBuilder csvReaderBuilder, MessageSource messageSource, ExamProperties examProperties) {
         try (CSVReader reader = csvReaderBuilder.build()) {
             List<String[]> rows = reader.readAll();
             return rows.stream().map(this::arrayToQuestion).collect(Collectors.toList());
@@ -66,5 +46,20 @@ public class QuestionServiceImpl implements QuestionService {
     private Answer arrayToAnswer(String[] array) {
         List<String> variants = Arrays.stream(array).skip(1).limit(4).collect(Collectors.toList());
         return new Answer(variants, array[5]);
+    }
+
+    private CSVReaderBuilder csvReaderBuilder(String path) {
+        try {
+            return new CSVReaderBuilder(
+                    new FileReader(
+                            this.getClass().getClassLoader().getResource(path).getPath()
+                    ))
+                    .withSkipLines(1)
+                    .withCSVParser(
+                            new CSVParserBuilder().withSeparator(';').build()
+                    );
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

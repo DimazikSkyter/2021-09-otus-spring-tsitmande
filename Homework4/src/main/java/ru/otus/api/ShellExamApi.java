@@ -39,9 +39,14 @@ public class ShellExamApi {
 
 
     @ShellMethod("Текущий протокол экзамена")
+    @ShellMethodAvailability(value = "canCheckStatus")
     public List<String> currentStatus() {
         log.info(messageSource.getMessage("exam.summary.total.score", null, examProperties.getLocale()));
         return examManagerService.currentStudentsResult();
+    }
+
+    private Availability canCheckStatus() {
+        return examManagerService.canCheckStatus() ? Availability.available() : Availability.unavailable("");
     }
 
     private Availability canStartNewExam() {

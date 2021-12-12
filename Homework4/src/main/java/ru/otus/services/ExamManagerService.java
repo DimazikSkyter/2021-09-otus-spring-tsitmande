@@ -9,4 +9,6 @@ public interface ExamManagerService {
     List<String> currentStudentsResult();
 
     boolean canStartNewExam();
+
+    boolean canCheckStatus();
 }

@@ -2,33 +2,31 @@ package ru.otus.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.api.ExamApi;
+import ru.otus.dao.QuestionsDao;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.properties.ExamProperties;
 
-import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ExamServiceImpl implements ExamService {
 
-    private final QuestionService questionService;
     private final MessageSource messageSource;
     private final ExamApi examApi;
     private final ExamProperties examProperties;
-
+    @Autowired
+    private QuestionsDao questionsDao;
 
     public int startNewExam() {
         int score = 0;
-        List<Question> questions = questionService.getAllQuestions();
+        List<Question> questions = questionsDao.getQuestions();
         for (Question question : questions) {
             score += tellQuestionAndWaitResponseAndHandleIt(question);
         }
