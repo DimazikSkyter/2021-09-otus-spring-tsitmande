@@ -1,0 +1,39 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.6'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id "io.freefair.lombok" version "6.3.0"
+}
+
+group 'ru.otus'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+
+    implementation 'com.h2database:h2:2.0.202'
+    implementation 'org.springframework.data:spring-data-jpa:2.6.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-parent:2.4.0'
+    implementation 'org.springframework.shell:spring-shell-starter:2.0.1.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.6.1'
+
+    testImplementation 'org.assertj:assertj-core:3.21.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+}
+
+test {
+    useJUnitPlatform()
+}
