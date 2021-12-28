@@ -46,7 +46,7 @@ public class BookDaoJdbc implements BookDao {
         Book updatingBook = getBookById(book.getId());
         checkAndUpdateGenre(book, updatingBook);
         checkAndUpdateAuthor(book, updatingBook);
-        jdbc.update("UPDATE BOOKS SET `NAME` = ?, `GENRE` = ?, `AUTHOR` = ? WHERE `ID` = ?", book.getName(), book.getGenre(), book.getAuthor(), book.getId());
+        jdbc.update("UPDATE BOOKS SET `GENRE` = ?, `AUTHOR` = ? WHERE `ID` = ?", book.getGenre(), book.getAuthor(), book.getId());
     }
 
     @Override

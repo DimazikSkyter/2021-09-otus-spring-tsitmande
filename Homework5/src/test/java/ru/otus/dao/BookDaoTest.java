@@ -64,7 +64,6 @@ class BookDaoTest {
     void updateBookById() {
         Book book = Book.builder()
                 .id(2)
-                .name("Alice's Adventures in Wonderland")
                 .genre("fantasy")
                 .author("Lewis Carroll")
                 .build();
@@ -74,7 +73,7 @@ class BookDaoTest {
                 .extracting(Book::getName,
                         Book::getAuthor,
                         Book::getGenre)
-                .containsExactly("Alice's Adventures in Wonderland", "Lewis Carroll", "fantasy");
+                .containsExactly("death note", "Lewis Carroll", "fantasy");
     }
 
     @Test

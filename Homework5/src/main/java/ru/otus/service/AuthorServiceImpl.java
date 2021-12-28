@@ -16,7 +16,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void addAuthorIfDoesntExist(String authorName) {
         List<Author> authorList = authorDao.getAuthorList();
-        Author author = new Author(authorList.size(), authorName);
+        Author author = new Author(authorList.size() + 1, authorName);
         if (!authorList.contains(author)) {
             authorDao.addNewAuthor(author);
         }

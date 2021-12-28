@@ -16,7 +16,7 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public void addGenreIfDoesntExist(String genreName) {
         List<Genre> authorList = genreDao.getGenreList();
-        Genre genre = new Genre(authorList.size(), genreName);
+        Genre genre = new Genre(authorList.size() + 1, genreName);
         if (!authorList.contains(genre)) {
             genreDao.addNewGenre(genre);
         }

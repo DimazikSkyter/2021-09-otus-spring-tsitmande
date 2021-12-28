@@ -16,18 +16,24 @@ public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
 
     @Override
+    public int count() {
+        return bookDao.count();
+    }
+
+    @Override
     public Book readBookById(long id) {
         log.info("Read book with id {}", id);
         return bookDao.getBookById(id);
     }
 
     @Override
-    public void createBookWithoutId(String name, String author, String genre) {
+    public long createBookWithoutId(String name, String author, String genre) {
         log.debug("Create new book with name {}, author {}, genre {}.", name, author, genre);
         checkAndUpdateGenreAndAuthor(genre, author);
-        int count = bookDao.count();
-        bookDao.createNewBook(count, name, author, genre);
+        int id = bookDao.count() + 1;
+        bookDao.createNewBook(id, name, author, genre);
         log.info("Book with name {}, author {}, genre {} successfully created.", name, author, genre);
+        return id;
     }
 
     @Override
