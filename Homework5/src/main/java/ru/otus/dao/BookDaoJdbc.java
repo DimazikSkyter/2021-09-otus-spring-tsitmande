@@ -23,17 +23,17 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public Book getBookById(long id) {
-        return jdbc.queryForObject("SELECT * FROM BOOKS WHERE id = ?", new BookMapper(), id);
+        return jdbc.queryForObject("SELECT id, name, author, genre FROM BOOKS WHERE id = ?", new BookMapper(), id);
     }
 
     @Override
     public List<Book> getBooksByAuthor(String author) {
-        return jdbc.query("SELECT * FROM BOOKS WHERE author = ?" , new BookMapper(), author);
+        return jdbc.query("SELECT id, name, author, genre FROM BOOKS WHERE author = ?" , new BookMapper(), author);
     }
 
     @Override
     public List<Book> getBooksByGenre(String genre) {
-        return jdbc.query("SELECT * FROM BOOKS WHERE genre = ?", new BookMapper(), genre);
+        return jdbc.query("SELECT id, name, author, genre FROM BOOKS WHERE genre = ?", new BookMapper(), genre);
     }
 
     @Override

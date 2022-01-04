@@ -63,10 +63,12 @@ class BookServiceTest {
 
         Mockito.doReturn(currentCount).when(bookDao).count();
 
-        assertThat(bookService.createBookWithoutId(name, author, genre))
-                .isEqualTo(currentCount);
+        int id = currentCount + 1;
 
-        Mockito.verify(bookDao, times(1)).createNewBook(currentCount, name, author, genre);
+        assertThat(bookService.createBookWithoutId(name, author, genre))
+                .isEqualTo(id);
+
+        Mockito.verify(bookDao, times(1)).createNewBook(id, name, author, genre);
     }
 
     @Test
