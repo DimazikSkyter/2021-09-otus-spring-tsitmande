@@ -56,24 +56,19 @@ class BookDaoTest {
 
     @Test
     void createNewBook() {
-        bookDaoJdbc.createNewBook(3, "lotr", "jackson", "fantasy");
+        bookDaoJdbc.createNewBook(3, "lotr", 1, 2);
         assertThat(bookDaoJdbc.count()).isEqualTo(3);
     }
 
     @Test
     void updateBookById() {
-        Book book = Book.builder()
-                .id(2)
-                .genre("fantasy")
-                .author("Lewis Carroll")
-                .build();
-        bookDaoJdbc.updateBook(book);
+        bookDaoJdbc.updateBook(2, 1, 1);
         Book bookUpdated = bookDaoJdbc.getBookById(2);
         assertThat(bookUpdated)
                 .extracting(Book::getName,
                         Book::getAuthor,
                         Book::getGenre)
-                .containsExactly("death note", "Lewis Carroll", "fantasy");
+                .containsExactly("death note", "oba", "fantastic");
     }
 
     @Test

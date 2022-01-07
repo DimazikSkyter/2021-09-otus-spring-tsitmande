@@ -29,19 +29,21 @@ public class BookServiceImpl implements BookService {
     @Override
     public long createBookWithoutId(String name, String author, String genre) {
         log.debug("Create new book with name {}, author {}, genre {}.", name, author, genre);
-        checkAndUpdateGenreAndAuthor(genre, author);
+        long authorId = authorService.addAuthorIfDoesntExist(author);
+        long genreId = genreService.addGenreIfDoesntExist(genre);
         int id = bookDao.count() + 1;
-        bookDao.createNewBook(id, name, author, genre);
+        bookDao.createNewBook(id, name, authorId, genreId);
         log.info("Book with name {}, author {}, genre {} successfully created.", name, author, genre);
         return id;
     }
 
     @Override
-    public void updateBook(Book book) {
-        log.debug("Trying update book {}", book);
-        checkAndUpdateGenreAndAuthor(book.getGenre(), book.getAuthor());
-        bookDao.updateBook(book);
-        log.info("Book {} successfully created.", book);
+    public void updateBook(long id, String author, String genre) {
+        log.debug("Trying update book with id {}, author {}, genre {}.", id, author, genre);
+        long authorId = authorService.addAuthorIfDoesntExist(author);
+        long genreId = genreService.addGenreIfDoesntExist(genre);
+        bookDao.updateBook(id, authorId, genreId);
+        log.info("Book with id {} successfully created.", id);
     }
 
     @Override
@@ -49,10 +51,5 @@ public class BookServiceImpl implements BookService {
         log.debug("Trying delete book with id {}", id);
         bookDao.deleteBookById(id);
         log.info("Book with id {} successfully deleted", id);
-    }
-
-    private void checkAndUpdateGenreAndAuthor(String genre, String author) {
-        authorService.addAuthorIfDoesntExist(author);
-        genreService.addGenreIfDoesntExist(genre);
     }
 }

@@ -23,46 +23,40 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public Book getBookById(long id) {
-        return jdbc.queryForObject("SELECT id, name, author, genre FROM BOOKS WHERE id = ?", new BookMapper(), id);
+        return jdbc.queryForObject("SELECT b.id, b.name, a.author as author, g.genre as genre FROM BOOKS b " +
+                "left JOIN GENRES g on b.genre_id = g.id " +
+                "left JOIN AUTHORS a on b.author_id = a.id " +
+                "WHERE b.id = ?", new BookMapper(), id);
     }
 
     @Override
     public List<Book> getBooksByAuthor(String author) {
-        return jdbc.query("SELECT id, name, author, genre FROM BOOKS WHERE author = ?" , new BookMapper(), author);
+        return jdbc.query("SELECT b.id, b.name, a.author as author, g.genre as genre FROM BOOKS b " +
+                "left JOIN GENRES g on b.genre_id = g.id " +
+                "left JOIN AUTHORS a on b.author_id = a.id " +
+                "WHERE a.author = ?" , new BookMapper(), author);
     }
 
     @Override
     public List<Book> getBooksByGenre(String genre) {
-        return jdbc.query("SELECT id, name, author, genre FROM BOOKS WHERE genre = ?", new BookMapper(), genre);
+        return jdbc.query("SELECT b.id, b.name, a.author as author, g.genre as genre FROM BOOKS b " +
+                "left JOIN GENRES g on b.genre_id = g.id " +
+                "left JOIN AUTHORS a on b.author_id = a.id " +
+                "WHERE g.genre = ?", new BookMapper(), genre);
     }
 
     @Override
-    public void createNewBook(long id, String name, String author, String genre) {
-        jdbc.update("INSERT INTO BOOKS (`ID`, `NAME`, `GENRE`, `AUTHOR`) VALUES (?, ?, ?, ?)", id, name, genre, author);
+    public void createNewBook(long id, String name, long authorId, long genreId) {
+        jdbc.update("INSERT INTO BOOKS (`ID`, `NAME`, `GENRE_ID`, `AUTHOR_ID`) VALUES (?, ?, ?, ?)", id, name, genreId, authorId);
     }
 
     @Override
-    public void updateBook(Book book) {
-        Book updatingBook = getBookById(book.getId());
-        checkAndUpdateGenre(book, updatingBook);
-        checkAndUpdateAuthor(book, updatingBook);
-        jdbc.update("UPDATE BOOKS SET `GENRE` = ?, `AUTHOR` = ? WHERE `ID` = ?", book.getGenre(), book.getAuthor(), book.getId());
+    public void updateBook(long id, long authorId, long genreId) {
+        jdbc.update("UPDATE BOOKS SET `AUTHOR_ID` = ?, `GENRE_ID` = ? WHERE `ID` = ?", authorId, genreId, id);
     }
 
     @Override
     public void deleteBookById(long id) {
         jdbc.update("DELETE FROM BOOKS WHERE ID = ?", id);
-    }
-
-    private void checkAndUpdateAuthor(Book book, Book updatingBook) {
-        if (book.getAuthor() == null) {
-            book.setAuthor(updatingBook.getAuthor());
-        }
-    }
-
-    private void checkAndUpdateGenre(Book book, Book updatingBook) {
-        if (book.getGenre() == null) {
-            book.setGenre(updatingBook.getGenre());
-        }
     }
 }

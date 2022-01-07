@@ -14,9 +14,9 @@ public interface BookDao {
 
     List<Book> getBooksByGenre(String genre);
 
-    void createNewBook(long id, String name, String author, String genre);
+    void createNewBook(long id, String name, long authorId, long genreId);
 
-    void updateBook(Book book);
+    void updateBook(long id, long authorId, long genreId);
 
     void deleteBookById(long id);
 }

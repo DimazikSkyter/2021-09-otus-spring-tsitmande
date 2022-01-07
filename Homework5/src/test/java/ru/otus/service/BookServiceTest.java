@@ -12,7 +12,7 @@ import ru.otus.dao.BookDaoJdbc;
 import ru.otus.domain.Book;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,13 +62,17 @@ class BookServiceTest {
         String author = "Lewis Carroll";
 
         Mockito.doReturn(currentCount).when(bookDao).count();
+        long authorId = 2;
+        long genreId = 4;
+        Mockito.doReturn(authorId).when(authorService).addAuthorIfDoesntExist(author);
+        Mockito.doReturn(genreId).when(genreService).addGenreIfDoesntExist(genre);
 
         int id = currentCount + 1;
 
         assertThat(bookService.createBookWithoutId(name, author, genre))
                 .isEqualTo(id);
 
-        Mockito.verify(bookDao, times(1)).createNewBook(id, name, author, genre);
+        Mockito.verify(bookDao, times(1)).createNewBook(id, name, authorId, genreId);
     }
 
     @Test
@@ -76,16 +80,11 @@ class BookServiceTest {
         String genre = "drama";
         String author = "James Francis Cameron";
 
-        Book book = Book.builder()
-                .genre(genre)
-                .author(author)
-                .build();
-
-        bookService.updateBook(book);
+        bookService.updateBook(1, author, genre);
 
         Mockito.verify(authorService, times(1)).addAuthorIfDoesntExist(author);
         Mockito.verify(genreService, times(1)).addGenreIfDoesntExist(genre);
-        Mockito.verify(bookDao, times(1)).updateBook(book);
+        Mockito.verify(bookDao, times(1)).updateBook(eq(1L), anyLong(), anyLong());
     }
 
     @Test

@@ -34,11 +34,7 @@ public class LibraryApi {
 
     @ShellMethod("Обновить книгу")
     public String updateBookById(@ShellOption long id, @ShellOption String genre, @ShellOption String author) {
-        bookService.updateBook(Book.builder()
-                .author(author)
-                .genre(genre)
-                .id(id)
-                .build());
+        bookService.updateBook(id, author, genre);
         return "Book with id " + id + " was updated.";
     }
 
