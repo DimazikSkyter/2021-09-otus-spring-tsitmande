@@ -1,0 +1,92 @@
+package ru.otus.repositories;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import ru.otus.model.Author;
+import ru.otus.model.Book;
+import ru.otus.model.Comment;
+import ru.otus.model.Genre;
+
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+@DataJpaTest
+@Import({BookRepositoryJpa.class} )
+class BookRepositoryJpaTest {
+
+    @Autowired
+    private BookRepositoryJpa bookRepositoryJpa;
+
+    @Autowired
+    private TestEntityManager em;
+
+    @Test
+    void shouldReturnCorrectSizeOfRepository() {
+
+        assertThat(bookRepositoryJpa.count()).isEqualTo(2);
+    }
+
+    @Test
+    void shouldFindBookById() {
+        Book book = bookRepositoryJpa.findById(1).get();
+        assertThat(book)
+                .extracting(Book::getName,
+                        b -> b.getAuthor().getAuthor(),
+                        b -> b.getGenre().get(0).getGenre(),
+                        b -> b.getComment().size())
+                .containsExactly("matrix", "vachovski", "fantastic", 3);
+    }
+
+    @Test
+    void shouldReturnBooksByAuthor() {
+        String author = "oba";
+        List<Book> books = bookRepositoryJpa.getBooksByAuthor(author);
+
+        assertThat(books.size()).isEqualTo(1);
+        assertThat(books.get(0))
+                .extracting(Book::getName,
+                        b -> b.getAuthor().getAuthor())
+                .containsExactly("death note", author);
+    }
+
+    @Test
+    void shouldReturnBooksByGenre() {
+        String genre = "fantastic";
+        List<Book> books = bookRepositoryJpa.getBooksByGenre(genre);
+
+        assertThat(books.size()).isEqualTo(1);
+
+        Book book = books.get(0);
+
+        assertThat(book.getGenre())
+                .flatExtracting(Genre::getGenre)
+                .hasSameElementsAs(List.of(genre));
+    }
+
+    @Test
+    void shouldSaveNewEntity() {
+        Book book = Book.builder()
+                .id(0L)
+                .name("sherlok holmes")
+                .genre(List.of(new Genre(0L, "triller"), new Genre(0, "detective")))
+                .author(new Author(0L, "Arthur Ignatius Conan Doyle"))
+                .comment(Set.of(new Comment(0L, null, "test comment")))
+                .build();
+
+        em.persist(book);
+        em.detach(book);
+//
+//        Book waitingBook = bookRepositoryJpa.findById(3).get();
+//        System.out.println(waitingBook);
+    }
+
+    @Test
+    void deleteBookById() {
+    }
+}
