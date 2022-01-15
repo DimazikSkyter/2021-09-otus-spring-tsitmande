@@ -1,16 +1,16 @@
 package ru.otus.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "authors")
-//@EqualsAndHashCode(exclude = {"id"})
 public class Author {
 
     @Id

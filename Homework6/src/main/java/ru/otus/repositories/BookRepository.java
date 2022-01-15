@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface BookRepository {
 
-    long count();
+    Long count();
 
     Optional<Book> findById(long id);
 

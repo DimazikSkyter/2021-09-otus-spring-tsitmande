@@ -34,6 +34,12 @@ public class LibraryApi {
         }
     }
 
+    @ShellMethod("Добавить коммент к книге по id")
+    public String addComment(@ShellOption long id, @ShellOption String comment) {
+        bookService.addNewCommentForBookById(id, comment);
+        return "The comment was added to book with id " + id;
+    }
+
     @ShellMethod("Создать книгу")
     public String createNewBook(@ShellOption String name, @ShellOption String author, @ShellOption List<String> genre) {
         long id = bookService.createBookWithoutId(name, author, genre);
@@ -41,7 +47,9 @@ public class LibraryApi {
     }
 
     @ShellMethod("Обновить книгу")
-    public String updateBookById(@ShellOption long id, @ShellOption String name, @ShellOption List<String> genre, @ShellOption String author) {
+    public String updateBookById(@ShellOption long id, @ShellOption(defaultValue = ShellOption.NULL) String name,
+                                 @ShellOption(defaultValue = ShellOption.NULL) List<String> genre,
+                                 @ShellOption(defaultValue = ShellOption.NULL) String author) {
         bookService.updateBook(id, name, author, genre);
         return "Book with id " + id + " was updated.";
     }

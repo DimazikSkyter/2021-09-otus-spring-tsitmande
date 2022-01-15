@@ -4,13 +4,17 @@ spring:
     initialization-mode: always
 
   jpa:
-#    generate-ddl: false
     generate-ddl: true
+    #generate-ddl: true
     hibernate:
-      ddl-auto: create
-      #ddl-auto: create-drop
-
-    #show-sql: true
+      ddl-auto: none
+    show-sql: true
+  h2:
+    console:
+      path: /h2
+      settings:
+        web-allow-others: true
+      enabled: true
 
 logging:
   level:

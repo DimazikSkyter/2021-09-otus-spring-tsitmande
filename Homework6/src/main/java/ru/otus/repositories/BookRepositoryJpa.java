@@ -1,6 +1,7 @@
 package ru.otus.repositories;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import ru.otus.model.Book;
 
@@ -16,7 +17,7 @@ public class BookRepositoryJpa implements BookRepository {
     private final EntityManager em;
 
     @Override
-    public long count() {
+    public Long count() {
         TypedQuery<Long> query = em.createQuery("select count(b) from Book b", Long.class);
         return query.getSingleResult();
     }
@@ -46,6 +47,7 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public Book save(Book book) {
+        em.detach(book);
         if (book.getId() <= 0) {
             em.persist(book);
             return book;

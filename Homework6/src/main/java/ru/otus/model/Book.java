@@ -2,12 +2,12 @@ package ru.otus.model;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +15,7 @@ import java.util.Set;
 @Setter
 @Builder
 @Entity
+@ToString
 @Table(name = "books")
 //todo subgraph в attributeNodes
 @NamedEntityGraph(name = "book-author-genre-entity-graph",
@@ -33,11 +34,14 @@ public class Book {
 
     @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
-    private Set<Comment> comment;
-
-    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "books_genres", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     @Fetch(FetchMode.SELECT)
     @BatchSize(size = 5)
+    private List<Comment> comment;
+
+    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @JoinTable(name = "books_genres", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 2)
     private List<Genre> genre;
 }

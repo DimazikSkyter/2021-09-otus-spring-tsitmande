@@ -1,16 +1,18 @@
 package ru.otus.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "comments")
+@ToString(exclude = {"book"})
+@EqualsAndHashCode(exclude = {"book"})
 public class Comment {
 
     @Id

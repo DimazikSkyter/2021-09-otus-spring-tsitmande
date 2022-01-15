@@ -11,13 +11,12 @@ import ru.otus.model.Comment;
 import ru.otus.model.Genre;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataJpaTest
-@Import({BookRepositoryJpa.class} )
+@Import({BookRepositoryJpa.class})
 class BookRepositoryJpaTest {
 
     @Autowired
@@ -40,7 +39,7 @@ class BookRepositoryJpaTest {
                         b -> b.getAuthor().getAuthor(),
                         b -> b.getGenre().get(0).getGenre(),
                         b -> b.getComment().size())
-                .containsExactly("matrix", "vachovski", "fantastic", 3);
+                .containsExactly("matrix", "vachovski", "triller", 3);
     }
 
     @Test
@@ -74,19 +73,36 @@ class BookRepositoryJpaTest {
         Book book = Book.builder()
                 .id(0L)
                 .name("sherlok holmes")
-                .genre(List.of(new Genre(0L, "triller"), new Genre(0, "detective")))
+                .genre(List.of(new Genre(0, "detective")))
                 .author(new Author(0L, "Arthur Ignatius Conan Doyle"))
-                .comment(Set.of(new Comment(0L, null, "test comment")))
+                .comment(List.of(new Comment(0L, null, "test comment")))
                 .build();
+        Book savedBook = bookRepositoryJpa.save(book);
 
-        em.persist(book);
+        assertThat(savedBook.getId()).isEqualTo(3);
+    }
+
+    @Test
+    void shouldUpdateEntity() {
+        Book book = bookRepositoryJpa.findById(1).get();
+        book.getComment().add(new Comment(0L, book, "comment"));
+        book.setName("zzz");
+        bookRepositoryJpa.save(book);
+        em.flush();
         em.detach(book);
-//
-//        Book waitingBook = bookRepositoryJpa.findById(3).get();
-//        System.out.println(waitingBook);
+        em.clear();
+
+        Book book1 = bookRepositoryJpa.findById(1).get();
+        System.out.println(book1);
     }
 
     @Test
     void deleteBookById() {
+        Book book = bookRepositoryJpa.findById(1).get();
+        assertThat(book).isNotNull();
+        bookRepositoryJpa.deleteBookById(1);
+        em.clear();
+        boolean isEmpty = bookRepositoryJpa.findById(1).isEmpty();
+        assertThat(isEmpty).isTrue();
     }
 }

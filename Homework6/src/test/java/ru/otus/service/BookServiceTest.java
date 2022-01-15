@@ -11,7 +11,9 @@ import ru.otus.model.Book;
 import ru.otus.model.Genre;
 import ru.otus.repositories.BookRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,10 +23,6 @@ import static org.mockito.Mockito.times;
 class BookServiceTest {
 
     @Mock
-    private AuthorServiceImpl authorService;
-    @Mock
-    private GenreServiceImpl genreService;
-    @Mock
     private BookRepository bookRepository;
 
     @InjectMocks
@@ -32,63 +30,55 @@ class BookServiceTest {
 
     @Test
     void shouldCountReturn2() {
-        Mockito.doReturn(2).when(bookRepository).count();
+        Mockito.doReturn(2L).when(bookRepository).count();
 
-        assertThat(bookService.count()).isEqualTo(2);
+        assertThat(bookService.count()).isEqualTo(2L);
     }
 
     @Test
     void shouldReadBookReturnAlise() {
-        int id = 3;
+        long id = 3;
         Book book = Book.builder()
-                .genre(List.of(new Genre(-1, "fantasy")))
+                .genre(List.of(new Genre(0L, "fantasy")))
                 .name("Alice's Adventures in Wonderland")
-                .author(new Author(-1, "Lewis Carroll"))
+                .author(new Author(0L, "Lewis Carroll"))
                 .build();
 
-        Mockito.doReturn(book).when(bookRepository).findById(id);
+        Mockito.doReturn(Optional.of(book)).when(bookRepository).findById(id);
 
         assertThat(bookService.readBookById(id))
                 .get()
                 .extracting(Book::getName,
-                        Book::getAuthor,
-                        Book::getGenre)
+                        b -> b.getAuthor().getAuthor(),
+                        b -> b.getGenre().get(0).getGenre())
                 .containsExactly("Alice's Adventures in Wonderland", "Lewis Carroll", "fantasy");
     }
 
     @Test
     void shouldCreateBookAndReturnItId() {
-        int currentCount = 3;
-
         String name = "Alice's Adventures in Wonderland";
         String genre = "fantasy";
         String author = "Lewis Carroll";
 
-        Mockito.doReturn(currentCount).when(bookRepository).count();
+        Mockito.doReturn(Book.builder().id(4).build()).when(bookRepository).save(any());
 
-        int id = currentCount + 1;
-
-        assertThat(bookService.createBookWithoutId(name, author, List.of(genre)))
-                .isEqualTo(id);
+        bookService.createBookWithoutId(name, author, List.of(genre));
 
         Mockito.verify(bookRepository, times(1)).save(any());
     }
 
     @Test
-    void shouldUpdateBookAndCheckMethodsCalling() {
-        String genre = "drama";
-        String author = "James Francis Cameron";
-//переделать
-//        Book book = Book.builder()
-//                .genre(genre)
-//                .author(author)
-//                .build();
-//
-//        bookService.updateBook(book);
-//
-//        Mockito.verify(authorService, times(1)).addAuthorIfDoesntExist(author);
-//        Mockito.verify(genreService, times(1)).addGenreIfDoesntExist(genre);
-//        Mockito.verify(bookRepository, times(1)).updateBook(book);
+    void shouldAddComment() {
+        String comment = "new comment 1";
+        Book book = Book.builder()
+                .id(1)
+                .comment(new ArrayList<>()).build();
+
+        Mockito.doReturn(Optional.of(book)).when(bookRepository).findById(1);
+
+        bookService.addNewCommentForBookById(1, comment);
+
+        Mockito.verify(bookRepository, times(1)).save(any());
     }
 
     @Test
