@@ -101,6 +101,7 @@ class BookRepositoryJpaTest {
         Book book = bookRepositoryJpa.findById(1).get();
         assertThat(book).isNotNull();
         bookRepositoryJpa.deleteBookById(1);
+        em.flush();
         em.clear();
         boolean isEmpty = bookRepositoryJpa.findById(1).isEmpty();
         assertThat(isEmpty).isTrue();

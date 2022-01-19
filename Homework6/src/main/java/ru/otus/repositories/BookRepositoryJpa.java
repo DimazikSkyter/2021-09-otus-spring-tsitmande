@@ -1,7 +1,7 @@
 package ru.otus.repositories;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 import ru.otus.model.Book;
 
@@ -28,26 +28,23 @@ public class BookRepositoryJpa implements BookRepository {
     }
 
     @Override
+    @EntityGraph(attributePaths = "author")
     public List<Book> getBooksByAuthor(String author) {
-        EntityGraph<?> entityGraph = em.getEntityGraph("book-author-genre-entity-graph");
-        TypedQuery<Book> query = em.createQuery("select b from Book b join fetch b.author a where a.author = :author", Book.class);
-        query.setHint("javax.persistence.fetchgraph", entityGraph);
+        TypedQuery<Book> query = em.createQuery("select b from Book b join b.author a where a.author = :author", Book.class);
         query.setParameter("author", author);
         return query.getResultList();
     }
 
     @Override
+    @EntityGraph(attributePaths = "genre")
     public List<Book> getBooksByGenre(String genre) {
-        EntityGraph<?> entityGraph = em.getEntityGraph("book-author-genre-entity-graph");
         TypedQuery<Book> query = em.createQuery("select b from Book b join fetch b.genre g where g.genre = :genre", Book.class);
-        query.setHint("javax.persistence.fetchgraph", entityGraph);
         query.setParameter("genre", genre);
         return query.getResultList();
     }
 
     @Override
     public Book save(Book book) {
-        em.detach(book);
         if (book.getId() <= 0) {
             em.persist(book);
             return book;
@@ -58,10 +55,7 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public void deleteBookById(long id) {
-        Query query = em.createQuery("delete " +
-                "from Book b " +
-                "where b.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
+        Book book = em.find(Book.class, id);
+        em.remove(book);
     }
 }

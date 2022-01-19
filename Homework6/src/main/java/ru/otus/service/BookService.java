@@ -2,6 +2,7 @@ package ru.otus.service;
 
 import ru.otus.model.Book;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
