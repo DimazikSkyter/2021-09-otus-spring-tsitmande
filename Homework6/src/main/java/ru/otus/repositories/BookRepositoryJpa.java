@@ -2,14 +2,14 @@ package ru.otus.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.otus.model.Book;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class BookRepositoryJpa implements BookRepository {
 
