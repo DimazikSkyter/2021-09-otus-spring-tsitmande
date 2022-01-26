@@ -1,6 +1,9 @@
 package ru.otus.repositories;
 
+import org.springframework.data.repository.Repository;
+import ru.otus.model.Author;
 import ru.otus.model.Book;
+import ru.otus.model.Genre;
 
 import java.util.List;
 import java.util.Optional;

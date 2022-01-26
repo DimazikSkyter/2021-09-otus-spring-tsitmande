@@ -65,7 +65,8 @@ class BookRepositoryJpaTest {
 
         assertThat(book.getGenre())
                 .flatExtracting(Genre::getGenre)
-                .hasSameElementsAs(List.of(genre));
+                .hasSize(4)
+                .contains(genre);
     }
 
     @Test
