@@ -2,6 +2,8 @@ package ru.otus.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.model.Author;
@@ -10,6 +12,7 @@ import ru.otus.model.Comment;
 import ru.otus.model.Genre;
 import ru.otus.repositories.BookRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,7 +29,6 @@ public class BookServiceImpl implements BookService {
         return bookRepository.count();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Optional<Book> readBookById(long id) {
         log.info("Read book with id {}", id);
@@ -72,7 +74,6 @@ public class BookServiceImpl implements BookService {
         log.info("Book {} successfully updated.", book);
     }
 
-    @Transactional
     @Override
     public void deleteBookById(long id) {
         log.debug("Trying delete book with id {}", id);
@@ -96,4 +97,12 @@ public class BookServiceImpl implements BookService {
         log.info("Book {} successfully updated.", book);
     }
 
+    @Override
+    public List<Book> findBooksByAuthor(String author) {
+        Author authorExample = new Author(0L, author);
+        Book bookExample = Book.builder()
+                .author(authorExample)
+                .build();
+        return bookRepository.findAll(Example.of(bookExample, ExampleMatcher.matchingAny()));
+    }
 }

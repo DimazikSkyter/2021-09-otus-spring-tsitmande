@@ -1,10 +1,14 @@
 package ru.otus.shell;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.h2.util.json.JSONArray;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.model.Author;
 import ru.otus.model.Book;
 import ru.otus.service.BookService;
@@ -24,6 +28,7 @@ public class LibraryApi {
         return String.valueOf(bookService.count());
     }
 
+    @Transactional(readOnly = true)
     @ShellMethod("Прочитать объект книгу по id")
     public String readBook(@ShellOption long id) {
         Optional<Book> book = bookService.readBookById(id);
@@ -58,5 +63,12 @@ public class LibraryApi {
     public String deleteBookById(@ShellOption long id) {
         bookService.deleteBookById(id);
         return "Book with id " + id + " was deleted.";
+    }
+
+    @Transactional
+    @ShellMethod("Поиск книг по автору")
+    public String findByAuthor(@ShellOption String author) throws JsonProcessingException {
+        List<Book> booksByAuthor = bookService.findBooksByAuthor(author);
+        return new ObjectMapper().writeValueAsString(booksByAuthor);
     }
 }

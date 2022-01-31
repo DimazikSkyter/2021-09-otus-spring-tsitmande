@@ -18,4 +18,6 @@ public interface BookService {
     void deleteBookById(long id);
 
     void addNewCommentForBookById(long id, String comment);
+
+    List<Book> findBooksByAuthor(String author);
 }
