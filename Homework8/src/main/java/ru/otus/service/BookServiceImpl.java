@@ -2,16 +2,13 @@ package ru.otus.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.model.Author;
 import ru.otus.model.Book;
 import ru.otus.model.Comment;
 import ru.otus.model.Genre;
 import ru.otus.repositories.BookRepository;
 
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,7 +38,7 @@ public class BookServiceImpl implements BookService {
         log.debug("Create new book with name {}, author {}, genreNames {}.", name, author, genreNames);
         List<Genre> genres = genreNames.stream().map(g -> new Genre(null, g)).collect(Collectors.toList());
         Book book = Book.builder()
-                .author(new Author(null, author))
+                .author(author)
                 .genre(genres)
                 .name(name)
                 .build();
@@ -56,14 +53,13 @@ public class BookServiceImpl implements BookService {
         log.debug("Trying update book with id {},  name {}, author {}, genreNames {}.", id, name, author, genreNames);
 
         Optional<Book> optionalBook = bookRepository.findById(id);
-        if(optionalBook.isEmpty()) {
+        if (optionalBook.isEmpty()) {
             throw new NullPointerException("Book with id " + id + " was not found.");
         }
         Book book = optionalBook.get();
         Optional.ofNullable(name).ifPresent(book::setName);
         Optional.ofNullable(author).ifPresent(a -> {
-            Author newAuthor = new Author(null, author);
-            book.setAuthor(newAuthor);
+            book.setAuthor(author);
         });
         Optional.ofNullable(genreNames).ifPresent(g -> {
             book.getGenre().clear();
@@ -88,7 +84,7 @@ public class BookServiceImpl implements BookService {
         log.debug("Trying add comment to book with id {}.", id);
 
         Optional<Book> optionalBook = bookRepository.findById(id);
-        if(optionalBook.isEmpty()) {
+        if (optionalBook.isEmpty()) {
             throw new NullPointerException("Book with id " + id + " was not found.");
         }
 

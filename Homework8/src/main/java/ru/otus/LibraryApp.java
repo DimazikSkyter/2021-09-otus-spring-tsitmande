@@ -16,7 +16,6 @@ import java.sql.SQLException;
 public class LibraryApp {
 
     public static void main(String[] args) throws SQLException {
-        ApplicationContext context = SpringApplication.run(LibraryApp.class);
-//        Console.main(args);
+        SpringApplication.run(LibraryApp.class);
     }
 }

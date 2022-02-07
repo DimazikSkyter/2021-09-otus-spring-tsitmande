@@ -7,12 +7,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.otus.model.Author;
 import ru.otus.model.Book;
 import ru.otus.model.Genre;
 import ru.otus.repositories.BookRepository;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +42,7 @@ class BookServiceTest {
         Book book = Book.builder()
                 .genre(List.of(new Genre(null, "fantasy")))
                 .name("Alice's Adventures in Wonderland")
-                .author(new Author(null, "Lewis Carroll"))
+                .author("Lewis Carroll")
                 .build();
 
         Mockito.doReturn(Optional.of(book)).when(bookRepository).findById(id);
@@ -52,7 +50,7 @@ class BookServiceTest {
         assertThat(bookService.readBookById(id))
                 .get()
                 .extracting(Book::getName,
-                        b -> b.getAuthor().getAuthor(),
+                        Book::getAuthor,
                         b -> b.getGenre().get(0).getGenre())
                 .containsExactly("Alice's Adventures in Wonderland", "Lewis Carroll", "fantasy");
     }

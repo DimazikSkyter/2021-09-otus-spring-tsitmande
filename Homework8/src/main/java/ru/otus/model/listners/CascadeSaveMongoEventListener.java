@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.stereotype.Component;
-import ru.otus.model.Author;
 import ru.otus.model.Book;
 import ru.otus.model.Comment;
 import ru.otus.model.Genre;
@@ -23,7 +22,6 @@ public class CascadeSaveMongoEventListener extends AbstractMongoEventListener<Bo
     public void onBeforeSave(BeforeSaveEvent<Book> event) {
         Book book = event.getSource();
 
-        Optional.ofNullable(book.getAuthor()).ifPresent(this::saveAuthor);
         Optional.ofNullable(book.getGenre()).ifPresent(this::saveAllGenre);
         Optional.ofNullable(book.getComment()).ifPresent(this::saveAllComments);
 
@@ -40,10 +38,6 @@ public class CascadeSaveMongoEventListener extends AbstractMongoEventListener<Bo
         for(Genre genre : genres) {
             saveGenre(genre);
         }
-    }
-
-    private void saveAuthor(Author author) {
-        mongoOperations.save(author);
     }
 
     private void saveGenre(Genre genre) {

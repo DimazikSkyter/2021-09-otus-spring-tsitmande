@@ -1,7 +1,10 @@
 package ru.otus.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -13,13 +16,14 @@ import java.util.List;
 @Builder
 @ToString
 @Document(collection = "books")
-//todo subgraph в attributeNodes
 public class Book {
 
     @Id
     private String id;
     private String name;
-    private Author author;
+    private String author;
+    @DBRef
     private List<Comment> comment;
+    @DBRef
     private List<Genre> genre;
 }

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.otus.model.Author;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.model.Book;
 import ru.otus.service.BookService;
 
