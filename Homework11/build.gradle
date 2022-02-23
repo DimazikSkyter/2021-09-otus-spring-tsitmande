@@ -1,0 +1,44 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.6'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id "io.freefair.lombok" version "6.3.0"
+}
+
+group 'ru.otus'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+
+    implementation 'com.h2database:h2:1.4.200'
+    implementation 'org.springframework.data:spring-data-jpa:2.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.6'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive:2.5.6'
+    implementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+//    implementation 'com.github.cloudyrock.mongock:mongock-spring-v5:4.3.12.BETA'
+//    implementation 'com.github.cloudyrock.mongock:mongodb-springdata-v3-driver:5.0.1.BETA'
+
+    implementation 'org.springframework.boot:spring-boot-starter:2.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.5.6'
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:2.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-parent:2.2.6.RELEASE'
+
+    testImplementation 'org.assertj:assertj-core:3.21.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.6'
+
+}
+
+test {
+    useJUnitPlatform()
+}
